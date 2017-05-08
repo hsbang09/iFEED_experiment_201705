@@ -254,12 +254,19 @@ function display_drivingFeatures(source){
     var conf1s=[];
     var conf2s=[];
     
+    var most_recent = -1;
+    
     for (var i=0;i<numFeatures;i++){
         lifts.push(source[i].metrics[1]);
         supps.push(source[i].metrics[0]);
         conf1s.push(source[i].metrics[2]);
         conf2s.push(source[i].metrics[3]);
         drivingFeatureTypes.push(pp_feature_type(source[i].name));
+        if(source[i].added){
+            if(source[i].added > most_recent){
+                most_recent = source[i].added;
+            }
+        }
     }
 
     // Set the axis to be Conf(F->S) and Conf(S->F)

@@ -573,6 +573,15 @@ function processFilterExpression(expression, prev_matched_ids, prev_logic, arch_
 */
 function applyPresetFilter(input_expression,bitString,rank){
 	
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Experiment    
+           
+    //var bitString = encodeBitStringBool(input_bitString);
+    
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
     var expression = remove_outer_parentheses(input_expression);
     
 	// Preset filter: {presetName[orbits;instruments;numbers]}   

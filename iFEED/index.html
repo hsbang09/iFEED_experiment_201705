@@ -658,13 +658,21 @@ function next_task(){
             }
 
            
-           
-           
+
            function display_arch_info(bitString) {
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Experiment    
+           
+                //var encoded = encodeBitString(bitString);
             	
             	document.getElementById('tab1').click();
 
                 json_arch = extractInfoFromBitString(bitString);
+               
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+               
                 var norb = json_arch.length;
                 var maxNInst = 0;
                 var totalNInst = 0;
@@ -756,6 +764,8 @@ function next_task(){
                         .style("font-size", "13px");
             }
            
+  
+           
            
        /*
             Returns the list of orbits
@@ -838,6 +848,71 @@ function next_task(){
             }
 
            
+           
+           
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Experiment     
+           
+var orbitOrder = [0,1,2,3,4]; // -> [3,0,1,4,2]
+var instrOrder = [0,1,2,3,4,5,6,7,8,9,10,11];
+           
+           
+function randomize_variable_order(){
+    orbitOrder = shuffleArray(orbitOrder);
+    instrOrder = shuffleArray(instrOrder);
+}
+           
+function encodeBitString(bitString){
+    var new_bitString = "";
+    for(var i=0;i<norb;i++){
+        for(var j=0;j<ninstr;j++){
+            new_bitString = new_bitString + bitString[orbitOrder[i]*ninstr+instrOrder[j]];
+        }
+    }
+    return new_bitString;
+}
+           
+function encodeBitStringBool(bitString){
+    var new_bitString = [];
+    for(var i=0;i<norb;i++){
+        for(var j=0;j<ninstr;j++){
+            new_bitString.push(bitString[orbitOrder[i]*ninstr+instrOrder[j]]);
+        }
+    }
+    return new_bitString;
+}   
+           
+           
+           
+function decodeBitString(bitString){
+    var original_bitString = "";
+    for(var i=0;i<norb;i++){
+        var orbIndex = orbitOrder.indexOf(i);
+        for(var j=0;j<ninstr;j++){
+            var instIndex = instrOrder.indexOf(j);
+            original_bitString = original_bitString + bitString[orbIndex*ninstr+instIndex];
+        }
+    }
+    return original_bitString;
+}  
+           
+/**
+ * Randomize array element order in-place.
+ * Using Durstenfeld shuffle algorithm.
+ */
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+           
+           
+           
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
            
            
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
