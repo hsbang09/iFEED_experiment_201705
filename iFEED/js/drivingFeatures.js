@@ -419,15 +419,21 @@ function display_drivingFeatures(source){
             .append('path')
             .attr('class','point dot dfplot')
             .attr("d", d3.svg.symbol().type('triangle-up').size(120))
-            //.append("circle")
-            //.attr("class", "dot dfplot")
-            //.attr("r", 5.5)
             .attr("transform", function (d) {
                 var xCoord = xMap(d);
                 var yCoord = yMap(d);
                 return "translate(" + xCoord + "," + yCoord + ")";
             })
             .style("stroke-width",1);
+    
+    d3.selectAll('.dot.dfplot').filter(function(d){
+        if(d.added==most_recent){
+            return true;
+        }
+        return false;
+    }).attr('d',d3.symbol().type(d3.symbolStar).size(120));
+    
+    
     
     // Update color scale
     updateDrivingFeatureColorScale(color_drivingFeatures3);
