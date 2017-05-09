@@ -1,8 +1,4 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 var relabel = true;
 
@@ -206,7 +202,7 @@ function pp_feature_single(expression){
     }
     var featureName = exp.split("[")[0];
 
-    if(featureName==="paretoFront" || featureName==='FeatureToBeAdded'){return expression;}
+    if(featureName==="paretoFront" || featureName==='FeatureToBeAdded'){return exp;}
 
     if(featureName[0]=='~'){
         featureName = 'NOT '+ featureName.substring(1);
@@ -273,3 +269,149 @@ function pp_feature(expression){
     }
     return output;
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Experiment
+
+function relabel_randomized_variable_single(expression){
+    
+    var exp = expression;
+    if(exp[0]==="{"){
+        exp = exp.substring(1,exp.length-1);
+    }
+    var featureName = exp.split("[")[0];
+
+    if(featureName==="paretoFront" || featureName==='FeatureToBeAdded'){return expression;}
+
+    if(featureName[0]=='~'){
+        featureName = 'NOT '+ featureName.substring(1);
+    }
+
+    var featureArg = exp.split("[")[1];
+    featureArg = featureArg.substring(0,featureArg.length-1);
+
+    var orbits = featureArg.split(";")[0].split(",");
+    var instruments = featureArg.split(";")[1].split(",");
+    var numbers = featureArg.split(";")[2];
+
+    var pporbits="";
+    var ppinstruments="";
+    for(var i=0;i<orbits.length;i++){
+        if(orbits[i].length===0){
+            continue;
+        }
+        if(i>0){pporbits = pporbits + ",";}
+        pporbits = pporbits + orbitOrder.indexOf(+orbits[i]);
+    }
+    for(var i=0;i<instruments.length;i++){
+        if(instruments[i].length===0){
+            continue;
+        }
+        if(i>0){ppinstruments = ppinstruments + ",";}
+        ppinstruments = ppinstruments + instrOrder.indexOf(+instruments[i]);
+    }
+    var ppexpression = featureName + "[" + pporbits + ";" + ppinstruments + ";" + numbers + "]";
+    return ppexpression;
+    
+}
+
+function relabel_randomized_variable(expression){
+    var output = '';
+    
+    var save = false;
+    var savedString = '';
+    
+    for(var i=0;i<expression.length;i++){
+        if(expression[i]=='{'){
+            save = true;
+            savedString = '{';
+        }else if(expression[i]=='}'){
+            save = false;
+            savedString = savedString + '}';
+            feature_expression = savedString;
+            output = output + '{' + relabel_randomized_variable_single(feature_expression) + '}';
+        }else{
+            if(save){
+                savedString = savedString + expression[i];
+            }else{
+                output = output + expression[i];
+            }
+        }
+    }
+    return output;
+     
+}
+
+function restore_randomized_variable_single(expression, orbitOrder, instrOrder){
+    
+    var exp = expression;
+    if(exp[0]==="{"){
+        exp = exp.substring(1,exp.length-1);
+    }
+    var featureName = exp.split("[")[0];
+
+    if(featureName==="paretoFront" || featureName==='FeatureToBeAdded'){return exp;}
+
+    if(featureName[0]=='~'){
+        featureName = 'NOT '+ featureName.substring(1);
+    }
+
+    var featureArg = exp.split("[")[1];
+    featureArg = featureArg.substring(0,featureArg.length-1);
+
+    var orbits = featureArg.split(";")[0].split(",");
+    var instruments = featureArg.split(";")[1].split(",");
+    var numbers = featureArg.split(";")[2];
+
+    var pporbits="";
+    var ppinstruments="";
+    for(var i=0;i<orbits.length;i++){
+        if(orbits[i].length===0){
+            continue;
+        }
+        if(i>0){pporbits = pporbits + ",";}
+        pporbits = pporbits + orbitOrder[+orbits[i]];
+    }
+    for(var i=0;i<instruments.length;i++){
+        if(instruments[i].length===0){
+            continue;
+        }
+        if(i>0){ppinstruments = ppinstruments + ",";}
+        ppinstruments = ppinstruments + instrOrder[+instruments[i]];
+    }
+    var ppexpression = featureName + "[" + pporbits + ";" + ppinstruments + ";" + numbers + "]";
+    return ppexpression;   
+}
+
+
+function restore_randomized_variable(expression, orbitOrder, instrOrder){
+    
+    var output = '';
+    
+    var save = false;
+    var savedString = '';
+    
+    for(var i=0;i<expression.length;i++){
+        if(expression[i]=='{'){
+            save = true;
+            savedString = '{';
+        }else if(expression[i]=='}'){
+            save = false;
+            savedString = savedString + '}';
+            feature_expression = savedString;
+            output = output + '{' + restore_randomized_variable_single(feature_expression, orbitOrder, instrOrder) + '}';
+        }else{
+            if(save){
+                savedString = savedString + expression[i];
+            }else{
+                output = output + expression[i];
+            }
+        }
+    }
+    return output;
+     
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

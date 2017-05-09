@@ -572,15 +572,6 @@ function processFilterExpression(expression, prev_matched_ids, prev_logic, arch_
     @return: A boolean indicating whether the input architecture passes the filter
 */
 function applyPresetFilter(input_expression,bitString,rank){
-	
-    
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Experiment    
-           
-    //var bitString = encodeBitStringBool(input_bitString);
-    
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
     
     var expression = remove_outer_parentheses(input_expression);
     
@@ -1035,10 +1026,15 @@ function applyComplexFilter(input_expression){
 	var paretoRankings = [];
     d3.selectAll('.dot.archPlot')[0].forEach(function(d){
     	ids.push(d.__data__.id);
-    	bitStrings.push(d.__data__.bitString);
-        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
-    });  
     
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Experiment        
+        bitStrings.push(encodeBitStringBool(d.__data__.bitString));
+        
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
+        paretoRankings.push(parseInt(d3.select(d).attr("paretoRank")));
+    });   
     
     var arch_info = {bitStrings:bitStrings,paretoRankings:paretoRankings};
     var indices = [];

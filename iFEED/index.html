@@ -663,7 +663,7 @@ function next_task(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Experiment    
            
-                //var encoded = encodeBitString(bitString);
+                bitString = encodeBitString(bitString);
             	
             	document.getElementById('tab1').click();
 
@@ -852,14 +852,29 @@ function next_task(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Experiment     
            
-var orbitOrder = [0,1,2,3,4]; // -> [3,0,1,4,2]
+var orbitOrder = [0,1,2,3,4];
 var instrOrder = [0,1,2,3,4,5,6,7,8,9,10,11];
            
+var randomized_orbitList = orbitList_displayName;
+var randomized_instrList = instrList_displayName;
+
            
 function randomize_variable_order(){
     orbitOrder = shuffleArray(orbitOrder);
     instrOrder = shuffleArray(instrOrder);
-}
+
+    randomized_orbitList = [];
+    randomized_instrList = [];
+    
+    for(var i=0;i<norb;i++){
+        randomized_orbitList.push(orbitList_displayName[orbitOrder[i]]);
+    }
+    
+    for(var j=0;j<ninstr;j++){
+        randomized_instrList.push(instrList_displayName[instrOrder[j]]);
+    }
+}   
+    
            
 function encodeBitString(bitString){
     var new_bitString = "";
@@ -870,6 +885,7 @@ function encodeBitString(bitString){
     }
     return new_bitString;
 }
+      
            
 function encodeBitStringBool(bitString){
     var new_bitString = [];
@@ -894,6 +910,7 @@ function decodeBitString(bitString){
     }
     return original_bitString;
 }  
+         
            
 /**
  * Randomize array element order in-place.
@@ -908,8 +925,6 @@ function shuffleArray(array) {
     }
     return array;
 }
-           
-           
            
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
            
