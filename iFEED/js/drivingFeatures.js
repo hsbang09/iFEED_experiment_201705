@@ -240,6 +240,7 @@ function display_drivingFeatures(source){
     
     var most_recent = -1;
 
+    
     for (var i=0;i<numFeatures;i++){
         lifts.push(source[i].metrics[1]);
         supps.push(source[i].metrics[0]);
