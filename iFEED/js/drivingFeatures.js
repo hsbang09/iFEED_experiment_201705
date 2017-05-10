@@ -58,7 +58,7 @@ function runDataMining() {
 
 		
 		var build_classification_tree = false;
-//        if(testType=="3" && turn_on_apriori==false){
+//        if(condition_number=="3" && turn_on_apriori==false){
 //			build_classification_tree = true;
 //           //jsonObj_tree = buildClassificationTree();
 //        }
@@ -66,10 +66,10 @@ function runDataMining() {
         
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Experiment
-        if(testType=='2'){
+        if(condition_number=='2'){
             sortedDFs = [];
 
-        }else if(testType=='3'){
+        }else if(condition_number=='3'){
             sortedDFs = generateDrivingFeatures(selected,non_selected,support_threshold,confidence_threshold,lift_threshold,userdef_features,"lift",build_classification_tree);  
         }
         
@@ -78,7 +78,7 @@ function runDataMining() {
 
         
         if(sortedDFs.length==0){
-            if(testType!='2'){
+            if(condition_number!='2'){
                 return;
             }
         }  

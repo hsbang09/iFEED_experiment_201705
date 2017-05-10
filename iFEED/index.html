@@ -314,8 +314,6 @@ and open the template in the editor.
             var key = "";
             var session_timed_out = false;
             var account_id =-12345678;
-            var testType = -1;
-            var remainingTime;
            
            
             // Scatter plot variables
@@ -421,9 +419,13 @@ and open the template in the editor.
             var buttonClickCount_feature = 0;
             var numOfArchViewed =0;
             var numOfDrivingFeatureViewed = 0;
-            var added_features_store = [];
-            
            
+           
+            var added_features_store = [];
+            var remainingTimeStore = [];
+           
+            var orbitOrderStore = [];
+            var instrOrderStore = [];
 
 
            
@@ -449,7 +451,7 @@ function resetTimer(){
     clearInterval(timeinterval);
     
     var startTime = Date.parse(new Date());
-    var deadline = new Date(startTime+remainingTime);
+    deadline = new Date(startTime+remainingTime);
     initializeClock(deadline);
 }
            
@@ -472,6 +474,9 @@ function initializeClock(endtime){
                 return;
             }
             else{
+                
+                store_task_specific_information();
+                
                 clearInterval(timeinterval);
                 session_timed_out = true;
                 d3.select('body').selectAll('div').remove();
@@ -500,13 +505,32 @@ function initializeClock(endtime){
     timeinterval = setInterval(updateClock,1000);
 }
             
+           
+           
+           
+function store_task_specific_information(){
+    
+    added_features_store.concat(added_features);
+    orbitOrderStore.push(orbitOrder);
+    instrOrderStore.push(instrOrder);
+    
+    var rt = getTimeRemaining(deadline).total/1000;
+    remainingTimeStore.push(rt);
+    
+}
 
    
-function update_task_direction(){
-    
+function update_task_direction(task_number, task_order){
+
     cancelDotSelections();
     initialize_tabs();
+    
+    // Reset added features
+    added_features=[];
+    // Randomize variable order
+    randomize_variable_order();
 
+    // Change the direction and the target selection
     if(task_number==0){
         d3.select("#main_header").text("Task "+(task_order.indexOf(task_number)+1)+": Low-cost, low-performance designs");
         d3.select('#main_text').html('<p>Find features that cover as many target designs as possible, while being specific enough so that it minimizes non-target coverage. </p>'
@@ -526,15 +550,43 @@ function update_task_direction(){
         select_archs_using_ids(high_cost_high_perf);
     }
 
-    added_features_store.concat(added_features);
-    added_features=[];
-
     d3.select("[id=numOfSelectedArchs_inputBox]").text(""+numOfSelectedArchs());  
     
-    if(testType=='2'){
-        runDataMining();
-        document.getElementById('tab1').click();
-    }
+    
+    
+
+//
+//    //Experiment
+//    
+//    if(condition_number=="1"){
+//
+//        d3.select("#tab2").text('-');
+//        d3.select("#view2").selectAll('g').remove();
+//        d3.select("#tab3").text('-');
+//        d3.select("#view3").selectAll('g').remove();
+//
+//        d3.select('#panel_2').remove();
+//
+//        d3.select(d3.select('body').selectAll('div')[0][1]).style('width','1400px').style('margin','auto');
+//
+//    }else if(condition_number=="2"){
+//
+//        runDataMining();
+//        document.getElementById('tab1').click();
+//
+//    }else {
+//
+//        // Do nothing
+//
+//    }
+//    
+//    
+//    
+//    
+    
+
+    
+    resetTimer();
 }
            
 
@@ -547,8 +599,7 @@ function previous_task(){
     }else if(i==2){
         task_number = task_order[1];
     }
-    update_task_direction();
-    resetTimer();
+    update_task_direction(task_number, task_order);
 }
 
 function next_task(){
@@ -562,8 +613,8 @@ function next_task(){
     }else if(i==2){
         // pass
     }
-    update_task_direction();
-    resetTimer();
+    store_task_specific_information();
+    update_task_direction(task_number, task_order);
 }
                   
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -586,14 +637,12 @@ function next_task(){
                             url: "/api/ifeed/import-data/",
                             type: "POST",
                             data: {path:path},
-                            async: true,
+                            async: false,
                             success: function (data, textStatus, jqXHR)
                             {
 								architectures = data;
-                            },
-                            complete: function () {
-                            	reset_scatterPlot();
-                            	draw_scatterPlot(architectures);                                 
+                                reset_scatterPlot();
+                            	draw_scatterPlot(architectures);     
                             },
                             error: function (jqXHR, textStatus, errorThrown)
                             {
@@ -851,6 +900,8 @@ function next_task(){
            
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Experiment     
+
+
            
 var orbitOrder = [0,1,2,3,4];
 var instrOrder = [0,1,2,3,4,5,6,7,8,9,10,11];
@@ -874,7 +925,6 @@ function randomize_variable_order(){
         randomized_instrList.push(instrList_displayName[instrOrder[j]]);
     }
 }   
-    
            
 function encodeBitString(bitString){
     var new_bitString = "";
@@ -896,9 +946,7 @@ function encodeBitStringBool(bitString){
     }
     return new_bitString;
 }   
-           
-           
-           
+                     
 function decodeBitString(bitString){
     var original_bitString = "";
     for(var i=0;i<norb;i++){
@@ -909,8 +957,7 @@ function decodeBitString(bitString){
         }
     }
     return original_bitString;
-}  
-         
+}    
            
 /**
  * Randomize array element order in-place.
@@ -926,41 +973,129 @@ function shuffleArray(array) {
     return array;
 }
            
+                 
+//function print_experiment_summary(){
+//    
+//    // task_order, condition_order, account_id
+//    // orbitOrder, instrOrder
+//    
+//    var path = "/Users/bang/workspace/Experiment-201705/results/";
+//    var filename = path + account_id + '.csv';
+//    
+//    var printout = [];
+//    
+//    var header = ['condition','task','account_id'];
+//    
+//    for(var i=0;i<norb;i++){
+//        header.push("orbit"+i);
+//    }
+//    for(var j=0;j<ninstr;j++){
+//        header.push("instr"+j);
+//    }
+//    
+//    header.push('remainingTime');
+//    
+//    
+//    header = header.join(',');
+//    printout.push(header);
+//    
+//    for(var i=0;i<3;i++){
+//        
+//        var row = [];
+//        
+//        var index = condition_order.indexOf(i);
+//        var condition = i+1;
+//        var task = task_order[index];
+//        row.concat([condition,task,account_id]);
+//        row.concat(orbitOrderStore[index]);
+//        row.concat(instrOrderStore[index]);
+//        row.push(remainingTimeStore[index]);
+//        
+//        row.join(",");
+//        printout.push(row);
+//    }
+//    
+//    printout = printout.join('\n');
+//    saveTextAsFile(filename, printout);
+//}
+//           
+//           
+//function saveTextAsFile(filename, inputText){
+//    
+//    var textToWrite = inputText;
+//    var fileNameToSaveAs = filename;
+//    
+//    var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+//
+//    var downloadLink = document.createElement("a");
+//    
+//    downloadLink.download = fileNameToSaveAs;
+//    downloadLink.innerHTML = "Download File";
+//    
+//    if (window.webkitURL != null){
+//        // Chrome allows the link to be clicked
+//        // without actually adding it to the DOM.
+//        downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+//    }
+//    else{
+//        // Firefox requires the link to be added to the DOM
+//        // before it can be clicked.
+//        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+//        downloadLink.onclick = document.body.removeChild(event.target);
+//        downloadLink.style.display = "none";
+//        document.body.appendChild(downloadLink);
+//    }
+//    downloadLink.click();
+//}
+//           
+
+           
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
            
            
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Experiment
 
-var cred = window.location.search;
-var task_order = [1,0,2];
+var task_order = shuffleArray([0, 1, 2]);
+var condition_order = shuffleArray([1, 2, 3]);
 var task_number = task_order[0];
+var condition_number = condition_order[0];
 
-if(cred){
-    cred = cred.substring(1);
-    testType = cred.split('-')[0];
-    account_id = cred.split('-')[1];
-    console.log("testType:" + testType);
+var deadline;
+var remainingTime = + 10*60*1000; // 10 minutes
+
+           
+// temp
+condition_number = 3;
+           
+           
+// Get account info
+var sessionInfo = window.location.search;
+if(sessionInfo){
+    sessionInfo = sessionInfo.substring(1);
+    account_id = sessionInfo;
 }else{
-    testType="3";
     account_id = '1231231';
 }
+  
+           
+// import data
+import_new_data();  
+           
+// update task direction
+update_task_direction(task_number,task_order);
 
-remainingTime = + 10*60*1000;
-var startTime = Date.parse(new Date());
-var deadline = new Date(startTime+remainingTime);
-initializeClock(deadline);
 
-import_new_data();
-
+           
 d3.select("#leftarrow").on("click",function(d){
     previous_task();
 });
 d3.select("#rightarrow").on("click",function(d){
     next_task();
 });
-         
+    
            
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
        
         </script>

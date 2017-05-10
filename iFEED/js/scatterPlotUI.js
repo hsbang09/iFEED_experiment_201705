@@ -196,40 +196,7 @@ function draw_scatterPlot(source) {
     d3.selectAll(".dot.archPlot")[0].forEach(function(d,i){
         d3.select(d).attr("paretoRank",-1);
     });
-    
-    
-    
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //Experiment
-    
-    if(testType=="1"){
 
-        d3.select("#tab2").text('-');
-        d3.select("#view2").selectAll('g').remove();
-        d3.select("#tab3").text('-');
-        d3.select("#view3").selectAll('g').remove();
-
-        d3.select('#panel_2').remove();
-
-        d3.select(d3.select('body').selectAll('div')[0][1]).style('width','1400px').style('margin','auto');
-
-    }else if(testType=="2"){
-
-        
-
-    }else {
-
-        // Do nothing
-
-    }
-    
-    update_task_direction();
-    
-    //calculateParetoRanking();
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    
-    
     //drawParetoFront();
     
     selection_changed = true;
@@ -364,6 +331,7 @@ function cancelDotSelections(option){
     
     // Reset the number of selected archs displayed
     d3.select("[id=numOfSelectedArchs_inputBox]").text(""+numOfSelectedArchs());
+    
 }
 
 
@@ -870,7 +838,7 @@ function initialize_tabs(){
 
 // Experiment
     initialize_tabs_inspection();
-	if(testType=='1'){
+	if(condition_number=='1'){
         return;
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -901,7 +869,7 @@ function initialize_tabs_filter_options(){
 
 function initialize_tabs_driving_features(){
 	
-	if(testType=="1"){
+	if(condition_number=="1"){
 		return;
 	}
 	
@@ -937,7 +905,7 @@ function initialize_tabs_driving_features(){
 
 function initialize_tabs_classification_tree(){
 
-	if(testType=="3"){
+	if(condition_number=="3"){
 		d3.select("#supportPanel").select("[id=view4]").select("g").remove();
 		var guideline = d3.select("#supportPanel").select("[id=view4]")
 				.append("g")
@@ -968,7 +936,7 @@ function initialize_tabs_classification_tree(){
 
 
 function set_selection_option(selected_option){
-	if(testType=="1"){
+	if(condition_number=="1"){
 		return;
 	}
 	if(selected_option=="1"){

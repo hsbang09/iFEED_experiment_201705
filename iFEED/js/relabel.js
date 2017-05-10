@@ -282,7 +282,7 @@ function relabel_randomized_variable_single(expression){
     }
     var featureName = exp.split("[")[0];
 
-    if(featureName==="paretoFront" || featureName==='FeatureToBeAdded'){return expression;}
+    if(featureName==="paretoFront" || featureName==='FeatureToBeAdded'){return exp;}
 
     if(featureName[0]=='~'){
         featureName = 'NOT '+ featureName.substring(1);
@@ -315,6 +315,7 @@ function relabel_randomized_variable_single(expression){
     return ppexpression;
     
 }
+
 
 function relabel_randomized_variable(expression){
     var output = '';
