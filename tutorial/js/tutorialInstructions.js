@@ -13,17 +13,11 @@ function credential_check(){
     var cred = window.location.search;
     if(cred){
         cred = cred.substring(1);
-        testType = cred.split("-")[0];
-        account_id = cred.split("-")[1];
+        account_id = cred;
+        testType = "3";
     }else{
         testType = "3";
         account_id = "3123123123";
-    }
-    
-    if(testType=='1'){
-        
-    }else if(testType=='2'){
-
     }
     
 
@@ -42,7 +36,7 @@ function credential_check(){
 
 
 function start_experiment(){
-    window.location.replace("http://localhost:8383?" + testType + "-" + account_id);
+    window.location.replace("http://52.14.7.76/experiment?" + account_id);
 }
 
 
@@ -197,7 +191,8 @@ if(current_view==5){ // Scatter plot panel
 	d3.select("#tutorial_header").text("Scatter Plot Panel")
 	d3.select("#tutorial_text_1").html('<p>The scatter plot panel (box highlighted in red) displays thousands of different designs of '
                                        +'satellite systems. Each dot corresponds to one design, and its location indicates the corresponding cost and science benefit score of the design. </p>'
-                                       +'<p>You can zoom in and zoom out using your mouse wheel, or using pinching motion if you are using a trackpad. You can also pan using your mouse.</p>');
+                                       +'<p>You can zoom in and zoom out using your mouse wheel, or using pinching motion if you are using a trackpad. You can also pan using your mouse.</p>'
+                                      +'<p>Note: During the tutorial, please focus on the part that is currently highlighted. Explanation about other parts of the interface may be provided later in the tutorial. </p>');
 
 	d3.select('#scatterPlotFigure')
 		.style('border-width','5px')
@@ -230,8 +225,7 @@ else if(current_view==7){ // Number of designs shown
 
 else if(current_view==8){ 
 	d3.select("#tutorial_header").text("Analysis Panel")
-	d3.select("#tutorial_text_1").html('<p>The analysis panel is located below the scatter plot panel, '
-			+'and you can use it to analyze the data displayed on the scatter plot.</p>');
+	d3.select("#tutorial_text_1").html('<p>The analysis panel is located below the scatter plot panel.</p>');
 
 	d3.select('#supportPanel')
 		.style('border-width','5px')
@@ -345,7 +339,7 @@ else if(current_view==12){
         '<p>In summary, a good feature should satisfy the following two conditions:</p>'
         +'<p>1. The feature should cover a large area of the target region (maximize the number of purple dots)</p>'
         +'<p>2. The feature should be specific enough, so that it does not cover the non-target region (minimize the number of pink dots)</p>'
-        +'<p>As we have seen in the previous example, there is a trade-off between these two conditions. If you try to make a feature cover more targets, you might make it too general, and make it cover non-target designs as well (too many pink dots). On the other hand, if you try to make a feature too specific, it may not cover many target designs (too little purple dots). </p>'
+        +'<p>As we have seen in the previous example, there is a trade-off between these two conditions. If you try to make a feature cover more targets, you might make it too general, and make it cover non-target designs as well (too many pink dots). On the other hand, if you try to make a feature too specific, it may not cover many target designs (too few purple dots). </p>'
         +'<p>Therefore, the key is finding the right balance between those two criteria. You can test the features again and see how they are distributed in the scatter plot by clicking the buttons below. (Reminder: Feature (a) is has good coverage but is not specific enough. Feature (b) is specific but has very low coverage of the targets.)</p>'
         +'<p>Understanding this concept is important. If you are not sure about the concept introduced here, please ask questions to the experimenter for clarification.</p>'
     );
@@ -384,12 +378,17 @@ else if(current_view==14){
 
     // Run data mining
     runDataMining();
-    d3.select('#test_feature_scheme').on('click',null);  
+    
+    
+    d3.select('#test_feature_scheme')[0][0].disabled=true;  
     
     d3.selectAll('.dot.dfplot').remove();
 
     // Remove automatically generated placeholder
     d3.selectAll('.applied_feature').remove();
+    current_feature_application = [];
+    update_feature_expression();
+    
 
     document.getElementById('tab2').click();
     highlight_support_panel();
@@ -499,13 +498,13 @@ else if(current_view==18){
 	}
     
 	d3.select("#tutorial_header").text("How to use Feature Application Status Panel")
-	d3.select("#tutorial_text_1").html('<p>The Feature Application Status panel shows the currently applied feature in two different ways. First, the upper window displays the logical expression of the currently applied feature. The lower window is an interactive interface that you can use to combine multiple features and generate more complex features. '
+	d3.select("#tutorial_text_1").html('<p>The Feature Application Status panel shows the currently applied feature in two different ways. First, the upper part displays the logical expression of the currently applied feature. The lower part is an interactive interface that you can use to combine multiple features and generate more complex features. '
 
-                                      +'<p>The check box located on the left of each feature indicates whether a certain feature is being applied or not. If it is checked, it means that the corresponding feature is being used to highlight pink dots on the scatter plot of the main window. When multiple ones are checked, then it combines the effect of those features. </p>'
+                                      +'<p>The check box located on the left of each feature indicates whether a certain feature is being applied or not. If it is checked, it means that the corresponding feature is being used to highlight pink dots on the scatter plot. When multiple ones are checked, then it combines the effect of those features. </p>'
                                       
                                       +'<p>When you have multiple features defined, there appears a dropdown menu in between those two features. This allows you to select the logical connective used to combine the two features. For example, if AND is used, that means two features are combined using a logical conjunction (AND) to highlight pink dots.</p>'
                                       
-                                      +'<p>To continue, try activating and deactivating some features, and also changing some logical connectives in between features. Note that the change is reflected on the upper window, as well as on the scatter plot in real time. </p>');
+                                      +'<p>To continue, try activating and deactivating some features, and also changing some logical connectives in between features. Note that the change is reflected on the upper part of the feature application status panel, as well as on the scatter plot in real time. </p>');
  
     
 	document.getElementById('tab3').click();
@@ -527,9 +526,9 @@ else if(current_view==19){
 	d3.select("#tutorial_header").text("How to use Feature Application Status Panel - continued")
 	d3.select("#tutorial_text_1").html('<p>The arrows next to a feature name allow you to change the location of each feature. By clicking left and right arrows, you can adjust the indentation levels of features. The indentation acts just like parentheses in a mathematical expression. If two features are at the same indentation level, they are evaluation together as if they are inside brackets. </p>'
                 
-                                       +'<p>For example, A OR (B AND C) can be implemented by placing feature A in one indentation level, and putting features B and C in the same level indentation level different from A (more to the right). To continue, try generating a combined feature that has a form: \'A AND (B OR C)\', where A,B, and C are different features.</p>'
+                                       +'<p>For example, let\'s say you want to express A OR (B AND C), where A, B, and C are all an arbitrary feature. Then you need to place place features B and C in the same level indentation level different from A (more to the right). To continue, try generating a combined feature that has a form: \'A AND (B OR C)\', where A, B, and C are different features. You will also have to adjust the indentation of the logical connectives. </p>'
                                 
-                                       +'<p>(hint: Notice that whenever you make a change, it is reflected on the upper window labeled "Currently Applied Feature Expression". You can use this see the current interpretation. You need to activate three features. Then, place B and C in the same indentation level. The logical connective between B and C need to be OR, and the connective between A and B need to be AND. If you have any question on how this work, please ask the experimenter.)</p>');
+                                       +'<p>(hint: Notice that whenever you make a change, you can see the current interpretation on the upper window labeled "Currently Applied Feature Expression". To implement \'A and (B or C)\', you first need to activate three features. Then, place B and C in the same indentation level. The logical connective between B and C need to be OR, and the connective between A and B need to be AND. If you have any question on how this work, please ask the experimenter.)</p>');
     
     
 	document.getElementById('tab3').click();
@@ -677,48 +676,17 @@ else if(current_view==24){
     
     
 
-//else if(current_view==24){ 
-//	if(max_view_reached<24){
-//		deactivate_continue_button();
-//	}
-//    
-//	d3.select("#tutorial_header").text("Testing features")
-//	d3.select("#tutorial_text_1").html('<p>Now let\'s go back to the feature application status panel. There is a button [Test current feature].'
-//                                       +' Clicking this button will add a new point on another scatter plot shown in the analysis panel.</p>'
-//                                      +'<p>The traingle represents the feature that you just </p>'
-//                                      
-//'<p>The features obtained using data mining are presented as as another scatter plot graphs. Each triangle '
-//			+'represents to one feature. The vertical axis represents the coverage of target region, and the horizontal axis represents the specificity'
-//			+' of the feature.'
-//			+' As you hover your mouse over each triangle, the relevant information is presented in 3 ways.</p>'
-//			+'<p>1. Tooltip shows the name of the feature, and the scores for the coverage and specificity.</p>'
-//			+'<p>2. Scatterplot highlights all the designs that have the given feature with pink (and purple) dots. </p>'
-//			+'<p>3. A Venn Diagram is presented to show the composition of designs with the feature and the'
-//			+' selected designs. The blue circle represents the selected designs, and the pink circle represents'
-//			+' designs with the feature.</p>'
-//                                      
-//                                      );
-//    
-//	document.getElementById('tab2').click();
-//	highlight_support_panel();
-//	
-//	d3.select('#panel_2').select('div')
-//		.style('border-width','5px')
-//		.style('border-style','solid')
-//		.style('border-color','#FF2D65');
-//    
-//	d3.select('#supportPanel')
-//		.style('border-width','5px')
-//		.style('border-style','solid')
-//		.style('border-color','#FF2D65'); 
-//}
-
 
 else if(current_view==25){ // Show only for testType= 3
 
     initialize_tabs_driving_features();
     select_archs_using_ids(tutorial_selection);
     
+    d3.selectAll('.applied_feature').remove();
+    current_feature_application = [];
+    update_feature_expression();
+    
+
 	d3.select("#tutorial_header").text("Data Mining")
 	d3.select("#tutorial_text_1").html('<p>iFEED also provides a data mining capability to help analyze the data.'
 					+' The data mining capability extracts features that have a good coverage and those that have high specificity.'
@@ -786,11 +754,13 @@ else if(current_view==27){ // Show only for testType= 3
   
     
 else if(current_view==28){ // Show only for testType= 3
+    
+    d3.select('#test_feature_scheme')[0][0].disabled=false;  
 	d3.select('#test_feature_scheme').on('click',test_feature);  
     
 	d3.select("#tutorial_header").text("Testing features")
 	d3.select("#tutorial_text_1").html('<p>Inside the feature analysis panel, there is a button [Test current feature].'
-                                       +' Clicking this button will add a new triangle on the mined features plot. This new triangle shows how much coverage and specificity the currently applied feature has. The most recent one is colored green, and it starts to turn into pink color as you generate new data points on the plot. </p>'
+                                       +' Clicking this button will add a new point on the mined features plot as a green star. This new point shows how much coverage and specificity the currently applied feature has. The most recent one is presented as a star, but it turns into a triangle as you generate new points on the plot. </p>'
                                       
                                        +'<p>To make a feature more specific and cover many target designs, you should try to make a feature that is located at the top-right corner of the mined features plot.</p>'
                                       
@@ -808,15 +778,15 @@ else if(current_view==28){ // Show only for testType= 3
     
 else if(current_view==29){ 
 	
-	d3.select("#tutorial_header").text("Rules of thumb in exploring features")
+	d3.select("#tutorial_header").text("Basic strategies for new exploring features")
 	d3.select("#tutorial_text_1").html('<p>1. When a feature is too general (covering many non-targets), you can combine it with other features using ANDs to make it more specific. Or if the current feature contains ORs, removing those OR connections help improving the spceficitiy of a feature.</p>'
                                       +'<p>2. When a feature is too specific, you can combine it with other features using ORs to make it more general. Or if the current feature contains ANDs, removing those AND connections improves the coverage of a feature. </p>'
                                       +'<p>3. You can generalize a feature by defining a new feature using Filter Settings. For example, if you are constantly seeing different combinations of instruments {A,B,C,D} in orbit 1000, you can define a new feature that says "At least 2 of A,B,C,D should be assigned to orbit 1000". </p>'
                                       
-                                      +'<br><br><p>So, the recommended strategies for you to get started are given here:</p>'
-                                      +'<p>1. Start from a general feature and try to make it more specific by using ANDs and removing ORs.</p>'
-                                      +'<p>2. Start from a specific feature and try to generalize it using ORs and removing ANDs.</p>'
-                                      +'<p>You can use this as a starting point, but keep in mind that it is very likely that you should use both ANDs and ORs in combination in order to achieve good coverage and specificity at the same time. Also, try to make use of filter settings if you can.</p>');  
+                                      +'<br><br><p>So, the recommended strategies for you to get started is:</p>'
+                                      +'<p>1. Start from a general feature with a good coverage (shown in the top-left corner) and try to improve it by combining it with other general features (using AND) in order to remove pink dots.</p>'
+                                      +'<p>2. Start from a specific feature with a good specificity (shown in the bottom-right corner) and try to improve it by combining it with other specific features (using OR) in order to add more purple dots.</p>'
+                                      +'<p>You can use this as a starting point, but keep in mind that it is very likely that you should use both ANDs and ORs in combination in order to achieve good coverage and specificity at the same time.</p>');  
 }
 
     
@@ -826,11 +796,10 @@ else if(current_view==30){
 	d3.select("#tutorial_header").text("Tutorial Finished")
 	d3.select("#tutorial_text_1").html('<p style="font-weight:bold;">This is the end of the tutorial. '
 		+'Once you start the experiment, you will not be able to return to this tutorial. If you don\'t understand specific'
-		+' parts of this tool, you can go back to that section now and review the material or ask questions to the experimenter. </p>'
-		+'<p style="font-weight:bold;">In the experiment, you will be given 3 tasks. Each task will have different target regions, and the goal is to find good features that have good specificity and coverage.'
-		+' During this time, you are encouraged to take notes'
-		+' (either physically using pencil and papers or electronically using a text editor on you computer).</p>'
-		+'<p style="font-weight:bold">At the end of each task, you will be asked to verbally explain to us what interesting features you have just found. Please let the experimenter know when you finish each task. </p>'
+		+' part of this tool, you can go back to that section now and review the material or ask questions to the experimenter. </p>'
+		+'<p style="font-weight:bold;">In the experiment, you will be given 3 tasks. For each task, you will be provided with a different set of capabilities to do the analysis. For some tasks, you will have only a subset tools introduced in this tutorial.</p>'
+        +'<p>The goal of all tasks is to find good features that have good specificity and coverage.</p>'
+		+'<p style="font-weight:bold">After each task is finished, you will be asked to verbally describe to us what interesting features you have just found. Please let the experimenter know when you finish each task. </p>'
 		+'<p>Now you can move on to the experiment by clicking the button below. Good luck!</p>');  
 
 	d3.select('#tutorial_text_1')
@@ -962,7 +931,7 @@ function turn_highlighted_to_selection(){
 
 
 
-var tutorial_feature_example_b = "{present[;1;]}&&{notInOrbit[2;1;]}&&{notInOrbit[3;1;]}&&{absent[;3;]}&&{notInOrbit[2;8;]}&&{notInOrbit[0;4;]}&&{notInOrbit[3;5;]}&&{notInOrbit[2;4;]}&&{separate[;4,2;]}&&{notInOrbit[2;7;]}&&{notInOrbit[4;0;]}&&{notInOrbit[3;0;]}&&{notInOrbit[2;2;]}&&{notInOrbit[3;9;]}&&{notInOrbit[4;2;]}&&{FeatureToBeAdded}";
+var tutorial_feature_example_b = "{present[;1;]}&&{notInOrbit[2;1;]}&&{notInOrbit[3;1;]}&&{absent[;3;]}&&{notInOrbit[2;8;]}&&{notInOrbit[0;4;]}&&{notInOrbit[3;5;]}&&{notInOrbit[2;4;]}&&{separate[;4,2;]}&&{notInOrbit[2;7;]}&&{notInOrbit[4;0;]}&&{notInOrbit[3;0;]}&&{notInOrbit[2;2;]}&&{notInOrbit[3;9;]}&&{notInOrbit[4;2;]}&&{Placeholder}";
 
 
 
@@ -970,5 +939,5 @@ var tutorial_selection = "6,51,165,169,176,189,194,227,237,239,258,287,298,303,3
 
 
 
-var tutorial_example_specific_feature = "{present[;1;]}&&{absent[;3;]}&&{absent[;4;]}&&{numOrbits[;;5]}&&{FeatureToBeAdded}";
+var tutorial_example_specific_feature = "{present[;1;]}&&{absent[;3;]}&&{absent[;4;]}&&{numOrbits[;;5]}&&{Placeholder}";
 

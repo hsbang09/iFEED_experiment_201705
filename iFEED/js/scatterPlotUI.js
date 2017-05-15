@@ -440,7 +440,7 @@ function check_satisfied_features(bitString){
         var this_feature = d3.select(d);
         var expression = this_feature.select('.feature_application_expression').attr('expression');
         
-        if(expression.indexOf('{FeatureToBeAdded}')!=-1){
+        if(expression.indexOf('{Placeholder}')!=-1){
             return;
         }
         

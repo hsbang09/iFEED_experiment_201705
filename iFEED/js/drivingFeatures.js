@@ -806,6 +806,8 @@ function draw_venn_diagram(){
 
 function add_current_feature_to_DF_plot(){
     
+    buttonClickCount_testFeature += 1;
+    
     if(true){
         var id = sortedDFs.length;
         var total = numOfArchs();
@@ -831,7 +833,10 @@ function add_current_feature_to_DF_plot(){
         }
         if(matchFound) return;
         
-        var current_feature = {id:id,name:get_feature_application_expression(),expression:get_feature_application_expression(),metrics:metrics,added:added_features.length+1};
+        var exp = get_feature_application_expression();
+        exp = restore_randomized_variable(exp, orbitOrder, instrOrder);
+        
+        var current_feature = {id:id,name:exp,expression:exp,metrics:metrics,added:added_features.length+1};
         
         sortedDFs.push(current_feature);
         added_features.push(current_feature);

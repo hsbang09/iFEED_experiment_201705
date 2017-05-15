@@ -148,7 +148,7 @@ function display_views(){
                                      
                                     +'<p>The task at hand deals with designing a constellation of satellites for Earth observation, but don\'t worry if you don\'t know much about the topic. All the details have been left out so that you will only deal with simple numbers and letters. This tutorial will walk you through the capabilities of iFEED and explain how you can use them to analyze a dataset.</p>'
                                     
-                                    +'<p>After the tutorial is finished, you will be given three different tasks, where you have to use iFEED to analyze a dataset. The data contains a large number of satellite system designs (selection of "instruments" and "orbits"). The details of your task will be explained in this tutorial.</p>'
+                                    +'<p>After the tutorial is finished, you will be given three different tasks, where you have to use iFEED to analyze a dataset. The data contains a large number of satellite system designs. The details of your task will be explained in this tutorial.</p>'
                                     
                                     +'<p>After each task is finished, you will be asked to fill out a short survey to measure how demanding you felt each task was.</p>'
                                     
@@ -217,7 +217,7 @@ function display_views(){
 	}
 	
 	else if (current_view==5){
-		window.location.replace("iFEEDTutorial.html?" + test_type + "-" + account_id);
+		window.location.replace("iFEEDTutorial.html?" + account_id);
 	}
 }
 	
@@ -233,22 +233,13 @@ var cred = window.location.search;
     
 if(cred){
 	cred = cred.substring(1);
-	if(cred.indexOf('-')!=-1){
-		test_type = cred.split("-")[0];
-		account_id = cred.split("-")[1];
-		current_view = 4;
-	}else{
-		test_type = cred;
-		account_id = test_type;
-		for(var i=0;i<9;i++){
-			account_id = account_id + Math.floor(Math.random()*10);
-		}
-		current_view = 1;
-	}
+    account_id = cred;
+    current_view = 4;
+    test_type='3'
 }else{
 	test_type = '3';
-	account_id = '3';
-	for(var i=0;i<9;i++){
+	account_id = '';
+	for(var i=0;i<10;i++){
 		account_id = account_id + Math.floor(Math.random()*10);
 	}
 	current_view = 1;

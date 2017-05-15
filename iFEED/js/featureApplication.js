@@ -93,13 +93,13 @@ function create_feature_placeholder(){
     // If the placeholder already exists, return
     for(var i=0;i<features.length;i++){
         var expression = features[i].expression;
-        if(expression.indexOf('FeatureToBeAdded')>-1){
+        if(expression.indexOf('Placeholder')>-1){
             return;
         }
     }
     
     // Add a new feature
-    var feature = {activation:true, expression:'{FeatureToBeAdded}', logic:'&&', level:0, logic_indent_level:0};
+    var feature = {activation:true, expression:'{Placeholder}', logic:'&&', level:0, logic_indent_level:0};
     features.push(feature);
     
     // Make an update to the display
@@ -212,7 +212,7 @@ function add_feature(input_level, input_logic, input_expression, activation, log
     }
 
     var displayed_text = "";
-    if(input_expression=='{FeatureToBeAdded}'){
+    if(input_expression=='{Placeholder}'){
         // If the current feature is a temp feature, display some pre-defined text
         displayed_text='Placeholder for new feature';
     }else{
@@ -807,7 +807,7 @@ function test_feature(){
     
     if(count==0){
         return;
-    }else if(count==1 && first_expression.indexOf('FeatureToBeAdded')>-1){
+    }else if(count==1 && first_expression.indexOf('Placeholder')>-1){
         return;
     }else{
         apply_current_feature_scheme();
@@ -827,7 +827,7 @@ function toggle_feature_activation(){
             var expression = d3.select(d).select('.feature_application_expression').attr('expression');
             
             features_activation_store.push(expression);
-            if(activation && expression.indexOf('FeatureToBeAdded')==-1){
+            if(activation && expression.indexOf('Placeholder')==-1){
                 // Deactivate the activated features. If the feature is the placeholder, don't deactivate it
                 d3.select(d).select('.feature_application_activate')[0][0].checked = false;
                 d3.select(d).select('.feature_application_expression').style('color',"#989898");
@@ -917,7 +917,7 @@ function update_feature_application_status(expression,option){
         
         for(var i=0;i<features.length;i++){
             var exp = features[i].expression;
-            if(exp.indexOf('FeatureToBeAdded')!=-1){
+            if(exp.indexOf('Placeholder')!=-1){
                 placeholder = features[i];
                 placeholder_index = i;
             }
@@ -1036,7 +1036,7 @@ d3.select('#clear_deactivated_features').on('click',function(){
     d3.selectAll('.applied_feature')[0].forEach(function(d){
         var activation = d3.select(d).select('.feature_application_activate')[0][0].checked;
         var expression = d3.select(d).select('.feature_application_expression').attr('expression');
-        if(!activation&& expression.indexOf('FeatureToBeAdded')==-1){
+        if(!activation&& expression.indexOf('Placeholder')==-1){
             d3.select(d).remove();
         }
     });

@@ -462,8 +462,8 @@ function processFilterExpression(expression, prev_matched_ids, prev_logic, arch_
            e_collapsed=e; 
         }else{
         	// Single filter expression
-            if(e.indexOf('FeatureToBeAdded') > -1){
-                // Skip matching if the current feature is a FeatureToBeAdded
+            if(e.indexOf('Placeholder') > -1){
+                // Skip matching if the current feature is a Placeholder
                 return prev_matched_ids;
             }
         	var matched = [];
@@ -525,9 +525,9 @@ function processFilterExpression(expression, prev_matched_ids, prev_logic, arch_
             
             if(current_logic=="||"){
                 var skip = false;
-                if(current.indexOf('{FeatureToBeAdded}')!=-1){
-                    if(remove_outer_parentheses(current)=='{FeatureToBeAdded}'){
-                        // If the current filter is {FeatureToBeAdded}, then skip processing it
+                if(current.indexOf('{Placeholder}')!=-1){
+                    if(remove_outer_parentheses(current)=='{Placeholder}'){
+                        // If the current filter is {Placeholder}, then skip processing it
                         skip=true;
                     }
                 }
@@ -542,9 +542,9 @@ function processFilterExpression(expression, prev_matched_ids, prev_logic, arch_
             // Last expression in a series
             if(current_logic=="||"){
                 var skip = false;
-                if(e.indexOf('{FeatureToBeAdded}')>-1){
-                    if(remove_outer_parentheses(e)=='{FeatureToBeAdded}'){
-                        // If the current filter is {FeatureToBeAdded}, then skip processing it
+                if(e.indexOf('{Placeholder}')>-1){
+                    if(remove_outer_parentheses(e)=='{Placeholder}'){
+                        // If the current filter is {Placeholder}, then skip processing it
                         skip=true;
                     }
                 }
@@ -1050,7 +1050,7 @@ function applyComplexFilter(input_expression){
     	matchedIDs.push(ids[index]);
     }
     
-    if(filterExpression=='{FeatureToBeAdded}'){
+    if(filterExpression=='{Placeholder}'){
         matchedIDs = [];
     }
 
