@@ -647,6 +647,9 @@ function next_task(){
         clearInterval(timeinterval);
         session_timed_out = true;
         
+        alert('The third task is finished! Please let the experimenter know that you have finished the task.')
+
+
         d3.select('body').selectAll('div').remove();
         session_timeout();
         var key_number = account_id;
