@@ -448,6 +448,9 @@ function getTimeRemaining(endtime){
       };
 }
     
+function stopTimer(){
+    clearInterval(timeinterval);
+}                  
            
 function resetTimer(){
     clearInterval(timeinterval);
@@ -471,7 +474,8 @@ function initializeClock(endtime){
         secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
         if(t.total<=0){
-            next_task();
+            stopTimer();
+            alert('The task is finished! Please let the experimenter know that you have finished the task. Do not proceed unless directed to do so.')
             return;
         }
     }
@@ -628,14 +632,12 @@ function next_task(){
     var i = task_order.indexOf(task_number);
     
     if(i==0){
-        alert('The first task is finished! Please let the experimenter know that you have finished the task. Please do not proceed unless directed to do so.')
         task_number = task_order[1];
         condition_number = condition_order[1];
         variable_scheme_number = variable_scheme_order[1];
         orbitOrder = orbitOrderStore[variable_scheme_number];
         instrOrder = instrOrderStore[variable_scheme_number];
     }else if(i==1){
-        alert('The second task is finished! Please let the experimenter know that you have finished the task. Please do not proceed unless directed to do so.')
         task_number = task_order[2];
         condition_number = condition_order[2];
         variable_scheme_number = variable_scheme_order[2];
@@ -646,9 +648,7 @@ function next_task(){
             
         clearInterval(timeinterval);
         session_timed_out = true;
-        
-        alert('The third task is finished! Please let the experimenter know that you have finished the task.')
-
+    
 
         d3.select('body').selectAll('div').remove();
         session_timeout();
